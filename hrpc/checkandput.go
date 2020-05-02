@@ -8,8 +8,8 @@ package hrpc
 import (
 	"fmt"
 
-	"github.com/tsuna/gohbase/filter"
-	"github.com/tsuna/gohbase/pb"
+	"github.com/glados28/gohbase/filter"
+	"github.com/glados28/gohbase/pb"
 	"google.golang.org/protobuf/proto"
 )
 

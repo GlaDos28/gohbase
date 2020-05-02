@@ -11,7 +11,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/tsuna/gohbase/pb"
+	"github.com/glados28/gohbase/pb"
 	"google.golang.org/protobuf/proto"
 )
 

@@ -15,9 +15,9 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/tsuna/gohbase/hrpc"
-	"github.com/tsuna/gohbase/region"
-	"github.com/tsuna/gohbase/zk"
+	"github.com/glados28/gohbase/hrpc"
+	"github.com/glados28/gohbase/region"
+	"github.com/glados28/gohbase/zk"
 	"google.golang.org/protobuf/proto"
 )
 

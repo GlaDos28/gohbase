@@ -21,10 +21,10 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/tsuna/gohbase/hrpc"
-	"github.com/tsuna/gohbase/pb"
-	"github.com/tsuna/gohbase/test"
-	"github.com/tsuna/gohbase/test/mock"
+	"github.com/glados28/gohbase/hrpc"
+	"github.com/glados28/gohbase/pb"
+	"github.com/glados28/gohbase/test"
+	"github.com/glados28/gohbase/test/mock"
 	"google.golang.org/protobuf/encoding/protowire"
 	"google.golang.org/protobuf/proto"
 )

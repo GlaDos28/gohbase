@@ -12,10 +12,10 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/tsuna/gohbase/hrpc"
-	"github.com/tsuna/gohbase/pb"
-	"github.com/tsuna/gohbase/region"
-	"github.com/tsuna/gohbase/zk"
+	"github.com/glados28/gohbase/hrpc"
+	"github.com/glados28/gohbase/pb"
+	"github.com/glados28/gohbase/region"
+	"github.com/glados28/gohbase/zk"
 )
 
 const (
@@ -36,6 +36,7 @@ type AdminClient interface {
 	RestoreSnapshot(t *hrpc.Snapshot) error
 	ClusterStatus() (*pb.ClusterStatus, error)
 	ListTableNames(t *hrpc.ListTableNames) ([]*pb.TableName, error)
+	ListTableSchemas(t *hrpc.ListTableSchemas) ([]*pb.TableSchema, error)
 }
 
 // NewAdminClient creates an admin HBase client.
