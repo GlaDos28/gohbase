@@ -28,7 +28,7 @@ func NewModifyTable(ctx context.Context, tableName *pb.TableName,
 	ct := &ModifyTable{
 		tableName: tableName,
 		base: base{
-			table:    tableName.Qualifier,
+			table:    []byte(fmt.Sprintf("%s:%s", string(tableName.Namespace), string(tableName.Qualifier))),
 			ctx:      ctx,
 			resultch: make(chan RPCResult, 1),
 		},
