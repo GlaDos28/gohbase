@@ -7,7 +7,6 @@ package hrpc
 
 import (
 	"context"
-	"fmt"
 	"github.com/glados28/gohbase/pb"
 	"google.golang.org/protobuf/proto"
 )
@@ -28,7 +27,7 @@ func NewModifyTable(ctx context.Context, tableName *pb.TableName,
 	ct := &ModifyTable{
 		tableName: tableName,
 		base: base{
-			table:    []byte(fmt.Sprintf("%s:%s", string(tableName.Namespace), string(tableName.Qualifier))),
+			table:    tableName.Qualifier,
 			ctx:      ctx,
 			resultch: make(chan RPCResult, 1),
 		},
@@ -74,11 +73,7 @@ func (ct *ModifyTable) ToProto() proto.Message {
 	return &pb.ModifyTableRequest{
 		TableName: ct.tableName,
 		TableSchema: &pb.TableSchema{
-			TableName: &pb.TableName{
-				// TODO: handle namespaces
-				Namespace: []byte("default"),
-				Qualifier: ct.table,
-			},
+			TableName:      ct.tableName,
 			ColumnFamilies: pbFamilies,
 		},
 	}
