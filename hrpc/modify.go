@@ -7,7 +7,7 @@ package hrpc
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/glados28/gohbase/pb"
 	"google.golang.org/protobuf/proto"
 )
