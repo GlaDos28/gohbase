@@ -38,6 +38,7 @@ type AdminClient interface {
 	ClusterStatus() (*pb.ClusterStatus, error)
 	ListTableNames(t *hrpc.ListTableNames) ([]*pb.TableName, error)
 	ListTableSchemas(t *hrpc.ListTableSchemas) ([]*pb.TableSchema, error)
+	AddColumn(t *hrpc.AddColumn) error
 }
 
 // NewAdminClient creates an admin HBase client.
@@ -297,4 +298,18 @@ func (c *client) ListTableSchemas(t *hrpc.ListTableSchemas) ([]*pb.TableSchema, 
 	}
 
 	return res.GetTableSchema(), nil
+}
+
+func (c *client) AddColumn(t *hrpc.AddColumn) error {
+	pbmsg, err := c.SendRPC(t)
+	if err != nil {
+		return err
+	}
+
+	_, ok := pbmsg.(*pb.AddColumnResponse)
+	if !ok {
+		return errors.New("sendPRC returned not a AddColumnResponse")
+	}
+
+	return nil
 }
