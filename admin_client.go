@@ -27,6 +27,7 @@ const (
 // AdminClient to perform admistrative operations with HMaster
 type AdminClient interface {
 	CreateTable(t *hrpc.CreateTable) error
+	ModifyTable(t *hrpc.ModifyTable) error
 	DeleteTable(t *hrpc.DeleteTable) error
 	EnableTable(t *hrpc.EnableTable) error
 	DisableTable(t *hrpc.DisableTable) error
@@ -95,6 +96,20 @@ func (c *client) CreateTable(t *hrpc.CreateTable) error {
 	}
 
 	return c.checkProcedureWithBackoff(t.Context(), r.GetProcId())
+}
+
+func (c *client) ModifyTable(t *hrpc.ModifyTable) error {
+	pbmsg, err := c.SendRPC(t)
+	if err != nil {
+		return err
+	}
+
+	_, ok := pbmsg.(*pb.ModifyTableResponse)
+	if !ok {
+		return fmt.Errorf("sendRPC returned not a ModifyTableResponse")
+	}
+
+	return nil
 }
 
 func (c *client) DeleteTable(t *hrpc.DeleteTable) error {
