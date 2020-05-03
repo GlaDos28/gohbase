@@ -269,3 +269,17 @@ func (c *client) ListTableNames(t *hrpc.ListTableNames) ([]*pb.TableName, error)
 
 	return res.GetTableNames(), nil
 }
+
+func (c *client) ListTableSchemas(t *hrpc.ListTableSchemas) ([]*pb.TableSchema, error) {
+	pbmsg, err := c.SendRPC(t)
+	if err != nil {
+		return nil, err
+	}
+
+	res, ok := pbmsg.(*pb.GetTableDescriptorsResponse)
+	if !ok {
+		return nil, errors.New("sendPRC returned not a GetTableDescriptorsResponse")
+	}
+
+	return res.GetTableSchema(), nil
+}
