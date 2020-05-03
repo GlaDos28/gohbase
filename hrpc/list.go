@@ -118,13 +118,14 @@ func NewListTableNames(ctx context.Context, opts ...func(Call) error) (*ListTabl
 //
 // By default matchs all tables. Use the options (ListRegex, ListNamespace, ListSysTables) to
 // set non default behaviour.
-func NewListTableSchemas(ctx context.Context, tableNames []*pb.TableName, opts ...func(Call) error) (*ListTableSchemas, error) {
+func NewListTableSchemas(ctx context.Context, namespace string, tableNames []*pb.TableName, opts ...func(Call) error) (*ListTableSchemas, error) {
 	tn := &ListTableSchemas{
 		base: base{
 			ctx:      ctx,
 			resultch: make(chan RPCResult, 1),
 		},
 		regex: ".*",
+		namespace: namespace,
 		tableNames: tableNames,
 	}
 	if err := applyOptions(tn, opts...); err != nil {
