@@ -281,6 +281,10 @@ func (c *client) mutate(m *hrpc.Mutate) (*hrpc.Result, error) {
 		return nil, err
 	}
 
+	if pbmsg == nil {
+		return nil, nil
+	}
+
 	r, ok := pbmsg.(*pb.MutateResponse)
 	if !ok {
 		return nil, fmt.Errorf("sendRPC returned not a MutateResponse")
