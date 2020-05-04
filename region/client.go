@@ -308,7 +308,6 @@ func (c *client) unregisterRPC(id uint32) hrpc.Call {
 }
 
 func (c *client) processRPCs() {
-	fmt.Printf("DEBUG QUEUE SIZE: %d\n", c.rpcQueueSize)
 	// TODO: flush when the size is too large
 	// TODO: if multi has only one call, send that call instead
 	m := newMulti(c.rpcQueueSize)
