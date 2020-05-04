@@ -107,8 +107,27 @@ func (c *client) SendRPC(rpc hrpc.Call) (proto.Message, error) {
 	}
 }
 
-func sendBlocking(rc hrpc.RegionClient, rpc hrpc.Call) (hrpc.RPCResult, error) {
-	rc.QueueRPC(rpc)
+func sendBlocking(c *client, rc hrpc.RegionClient, rpc hrpc.Call) (hrpc.RPCResult, error) {
+	if b, ok := rpc.(hrpc.Batchable); c != nil && ok && !b.SkipBatch() {
+
+		// queue up the rpc
+		select {
+		case <-rpc.Context().Done():
+			// rpc timed out before being processed
+		case <-c.done:
+			region.ReturnResultPublic(rpc, nil, ErrClientClosed)
+		default:
+			if cap(c.rpcBuffer) <= c.rpcBufferSize {
+				c.rpcBuffer = append(c.rpcBuffer, rpc)
+			} else {
+				c.rpcBuffer[c.rpcBufferSize] = rpc
+			}
+
+			c.rpcBufferSize += 1
+		}
+	} else {
+		rc.QueueRPC(rpc)
+	}
 
 	var res hrpc.RPCResult
 	// Wait for the response
@@ -138,7 +157,7 @@ func (c *client) sendRPCToRegion(rpc hrpc.Call, reg hrpc.RegionInfo) (proto.Mess
 		}
 		return nil, region.NotServingRegionError{}
 	}
-	res, err := sendBlocking(client, rpc)
+	res, err := sendBlocking(c, client, rpc)
 	if err != nil {
 		return nil, err
 	}
@@ -415,7 +434,7 @@ func isRegionEstablished(rc hrpc.RegionClient, reg hrpc.RegionInfo) error {
 	probe.ExistsOnly()
 
 	probe.SetRegion(reg)
-	res, err := sendBlocking(rc, probe)
+	res, err := sendBlocking(nil, rc, probe)
 	if err != nil {
 		panic(fmt.Sprintf("should not happen: %s", err))
 	}

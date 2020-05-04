@@ -44,6 +44,7 @@ type RegionClient interface {
 	Addr() string
 	QueueRPC(Call)
 	String() string
+	ManualFlush(rpcs []Call) error
 }
 
 // Call represents an HBase RPC call.

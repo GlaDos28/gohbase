@@ -307,6 +307,50 @@ func (c *client) unregisterRPC(id uint32) hrpc.Call {
 	return rpc
 }
 
+func (c *client) ManualFlush(rpcs []hrpc.Call) error {
+	m := newMulti(c.rpcQueueSize)
+	defer func() {
+		m.returnResults(nil, ErrClientClosed)
+	}()
+
+	flush := func() error {
+		var err error
+
+		if log.GetLevel() == log.DebugLevel {
+			log.WithFields(log.Fields{
+				"len":  m.len(),
+				"addr": c.Addr(),
+			}).Debug("flushing MultiRequest")
+		}
+
+		if err = c.trySend(m); err != nil {
+			m.returnResults(nil, err)
+		}
+
+		m = newMulti(c.rpcQueueSize)
+
+		return err
+	}
+
+	for i, rpc := range rpcs {
+		if m.add(rpc) {
+			if err := flush(); err != nil {
+				return err
+			}
+		}
+
+		rpcs[i] = nil
+	}
+
+	if len(m.calls) > 0 {
+		if err := flush(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (c *client) processRPCs() {
 	// TODO: flush when the size is too large
 	// TODO: if multi has only one call, send that call instead
@@ -387,6 +431,10 @@ func (c *client) processRPCs() {
 		}
 		flush()
 	}
+}
+
+func ReturnResultPublic(c hrpc.Call, msg proto.Message, err error) {
+	returnResult(c, msg, err)
 }
 
 func returnResult(c hrpc.Call, msg proto.Message, err error) {

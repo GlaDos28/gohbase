@@ -39,6 +39,7 @@ type Client interface {
 	CheckAndPut(p *hrpc.Mutate, family string, qualifier string,
 		expectedValue []byte) (bool, error)
 	Close()
+	Flush() error
 }
 
 // RPCClient is core client of gohbase. It's exposed for testing.
@@ -94,6 +95,9 @@ type client struct {
 
 	newRegionClientFn func(string, region.ClientType, int, time.Duration,
 		string, time.Duration) hrpc.RegionClient
+
+	rpcBuffer []hrpc.Call
+	rpcBufferSize int
 }
 
 // NewClient creates a new HBase client.
@@ -201,6 +205,29 @@ func (c *client) Close() {
 		}
 		c.clients.closeAll()
 	})
+}
+
+func (c *client) Flush() error {
+	if c.rpcBufferSize <= 0 {
+		return nil
+	}
+
+	// Note that all bufferred RPC should have the same region, so be careful, this is plug
+	reg, err := c.getRegionForRpc(c.rpcBuffer[0])
+	if err != nil {
+		return err
+	}
+
+	rc := reg.Client()
+
+	err = rc.ManualFlush(c.rpcBuffer)
+	if err != nil {
+		return err
+	}
+
+	c.rpcBufferSize = 0
+
+	return nil
 }
 
 func (c *client) Scan(s *hrpc.Scan) hrpc.Scanner {
