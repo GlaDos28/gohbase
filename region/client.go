@@ -187,6 +187,7 @@ type client struct {
 // QueueRPC will add an rpc call to the queue for processing by the writer goroutine
 func (c *client) QueueRPC(rpc hrpc.Call) {
 	if b, ok := rpc.(hrpc.Batchable); ok && c.rpcQueueSize > 1 && !b.SkipBatch() {
+		fmt.Println("YEEEEEEEEE, IM BATCHIN': " + rpc.Name())
 		// queue up the rpc
 		select {
 		case <-rpc.Context().Done():
