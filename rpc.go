@@ -117,8 +117,9 @@ func sendBlocking(c *client, rc hrpc.RegionClient, rpc hrpc.Call) (hrpc.RPCResul
 		case <-c.done:
 			region.ReturnResultPublic(rpc, nil, ErrClientClosed)
 		default:
-			if cap(c.rpcBuffer) <= c.rpcBufferSize {
+			if len(c.rpcBuffer) <= c.rpcBufferSize {
 				c.rpcBuffer = append(c.rpcBuffer, rpc)
+				c.rpcBuffer = c.rpcBuffer[:cap(c.rpcBuffer)]
 			} else {
 				c.rpcBuffer[c.rpcBufferSize] = rpc
 			}
