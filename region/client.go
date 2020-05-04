@@ -333,7 +333,6 @@ func (c *client) ManualFlush(rpcs []hrpc.Call) error {
 	}
 
 	for i, rpc := range rpcs {
-		log.Infof("XXX: %v", rpc)
 		if m.add(rpc) {
 			if err := flush(); err != nil {
 				return err

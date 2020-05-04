@@ -220,7 +220,7 @@ func (c *client) Flush() error {
 
 	rc := reg.Client()
 
-	err = rc.ManualFlush(c.rpcBuffer)
+	err = rc.ManualFlush(c.rpcBuffer[:c.rpcBufferSize])
 	if err != nil {
 		return err
 	}
