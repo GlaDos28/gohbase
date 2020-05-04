@@ -126,7 +126,7 @@ func sendBlocking(c *client, rc hrpc.RegionClient, rpc hrpc.Call) (hrpc.RPCResul
 			c.rpcBufferSize += 1
 		}
 
-		return nil, nil
+		return hrpc.RPCResult{}, nil
 	} else {
 		rc.QueueRPC(rpc)
 	}
