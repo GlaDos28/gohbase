@@ -115,7 +115,7 @@ func sendBlocking(c *client, rc hrpc.RegionClient, rpc hrpc.Call) (hrpc.RPCResul
 		case <-rpc.Context().Done():
 			// rpc timed out before being processed
 		case <-c.done:
-			region.ReturnResultPublic(rpc, nil, ErrClientClosed)
+			// region.returnResult(rpc, nil, ErrClientClosed)
 		default:
 			if len(c.rpcBuffer) <= c.rpcBufferSize {
 				c.rpcBuffer = append(c.rpcBuffer, rpc)

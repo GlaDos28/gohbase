@@ -415,10 +415,6 @@ func (c *client) processRPCs() {
 	}
 }
 
-func ReturnResultPublic(c hrpc.Call, msg proto.Message, err error) {
-	returnResult(c, msg, err)
-}
-
 func returnResult(c hrpc.Call, msg proto.Message, err error) {
 	if m, ok := c.(*multi); ok {
 		m.returnResults(msg, err)
