@@ -332,7 +332,7 @@ func (c *client) ManualFlush(rpcs []hrpc.Call) error {
 		return err
 	}
 
-	for i, rpc := range rpcs {
+	for _, rpc := range rpcs {
 		if m.add(rpc) {
 			if err := flush(); err != nil {
 				return err
