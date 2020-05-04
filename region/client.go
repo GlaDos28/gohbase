@@ -309,9 +309,6 @@ func (c *client) unregisterRPC(id uint32) hrpc.Call {
 
 func (c *client) ManualFlush(rpcs []hrpc.Call) error {
 	m := newMulti(len(rpcs))
-	defer func() {
-		m.returnResults(nil, ErrClientClosed)
-	}()
 
 	for i, rpc := range rpcs {
 		m.add(rpc)
