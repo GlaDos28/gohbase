@@ -338,8 +338,6 @@ func (c *client) ManualFlush(rpcs []hrpc.Call) error {
 				return err
 			}
 		}
-
-		rpcs[i] = nil
 	}
 
 	if len(m.calls) > 0 {
