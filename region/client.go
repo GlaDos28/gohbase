@@ -187,7 +187,6 @@ type client struct {
 // QueueRPC will add an rpc call to the queue for processing by the writer goroutine
 func (c *client) QueueRPC(rpc hrpc.Call) {
 	if b, ok := rpc.(hrpc.Batchable); ok && c.rpcQueueSize > 1 && !b.SkipBatch() {
-		fmt.Println("YEEEEEEEEE, IM BATCHIN': " + rpc.Name())
 		// queue up the rpc
 		select {
 		case <-rpc.Context().Done():
@@ -309,6 +308,7 @@ func (c *client) unregisterRPC(id uint32) hrpc.Call {
 }
 
 func (c *client) processRPCs() {
+	fmt.Printf("DEBUG QUEUE SIZE: %d\n", c.rpcQueueSize)
 	// TODO: flush when the size is too large
 	// TODO: if multi has only one call, send that call instead
 	m := newMulti(c.rpcQueueSize)
