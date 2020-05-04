@@ -308,44 +308,26 @@ func (c *client) unregisterRPC(id uint32) hrpc.Call {
 }
 
 func (c *client) ManualFlush(rpcs []hrpc.Call) error {
-	m := newMulti(c.rpcQueueSize)
+	m := newMulti(len(rpcs))
 	defer func() {
 		m.returnResults(nil, ErrClientClosed)
 	}()
 
-	flush := func() error {
-		var err error
-
-		if log.GetLevel() == log.DebugLevel {
-			log.WithFields(log.Fields{
-				"len":  m.len(),
-				"addr": c.Addr(),
-			}).Debug("flushing MultiRequest")
-		}
-
-		if err = c.trySend(m); err != nil {
-			m.returnResults(nil, err)
-		}
-
-		m = newMulti(c.rpcQueueSize)
-
-		return err
-	}
-
 	for i, rpc := range rpcs {
-		if m.add(rpc) {
-			if err := flush(); err != nil {
-				return err
-			}
-		}
-
+		m.add(rpc)
 		rpcs[i] = nil
 	}
 
-	if len(m.calls) > 0 {
-		if err := flush(); err != nil {
-			return err
-		}
+	if log.GetLevel() == log.DebugLevel {
+		log.WithFields(log.Fields{
+			"len":  m.len(),
+			"addr": c.Addr(),
+		}).Debug("flushing MultiRequest")
+	}
+
+	if err := c.trySend(m); err != nil {
+		m.returnResults(nil, err)
+		return err
 	}
 
 	return nil
